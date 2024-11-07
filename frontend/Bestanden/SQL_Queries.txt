@@ -1,0 +1,53 @@
+-- Create the Users Table
+CREATE TABLE users (
+  user_id INT PRIMARY KEY IDENTITY(1,1),  -- Unieke user ID, auto-increment
+  username VARCHAR(50) NOT NULL UNIQUE,    -- Unieke gebruikersnaam
+  email VARCHAR(100) NOT NULL UNIQUE,      -- Uniek e-mailadres
+  password VARCHAR(255) NOT NULL,          -- Gehashte wachtwoorden
+  profile_image VARCHAR(255),              -- Optionele profielafbeelding (URL)
+  bio TEXT,                                -- Optionele bio van de gebruiker
+  created_at DATETIME DEFAULT GETDATE()    -- Automatische timestamp bij creatie
+);
+
+-- Create the Recipes Table
+CREATE TABLE recipes (
+  recipe_id INT PRIMARY KEY IDENTITY(1,1), -- Unieke recipe ID, auto-increment
+  user_id INT NOT NULL,                    -- Verwijst naar de gebruiker (Foreign Key)
+  title VARCHAR(100) NOT NULL,             -- Titel van het recept
+  description TEXT NOT NULL,               -- Korte beschrijving van het recept
+  ingredients TEXT NOT NULL,               -- Ingrediënten (in JSON of tekst formaat)
+  instructions TEXT NOT NULL,              -- Kookstappen
+  image_url VARCHAR(255),                  -- Optionele afbeelding (URL)
+  created_at DATETIME DEFAULT GETDATE(),   -- Automatische timestamp bij creatie
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE -- Zorgt voor relatie met users
+);
+
+-- Create the Likes Table
+CREATE TABLE likes (
+  like_id INT PRIMARY KEY IDENTITY(1,1),   -- Unieke like ID, auto-increment
+  user_id INT,                             -- Verwijst naar de gebruiker (Foreign Key)
+  recipe_id INT,                           -- Verwijst naar het recept (Foreign Key)
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL, -- Bij verwijderen gebruiker, stel user_id in op NULL
+  FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id) ON DELETE NO ACTION -- Voorkom cyclische paden, handmatige verwijdering vereist
+);
+
+-- Create the Shares Table
+CREATE TABLE shares (
+  share_id INT PRIMARY KEY IDENTITY(1,1),  -- Unieke share ID, auto-increment
+  user_id INT,                             -- Verwijst naar de gebruiker (Foreign Key)
+  recipe_id INT,                           -- Verwijst naar het recept (Foreign Key)
+  shared_at DATETIME DEFAULT GETDATE(),    -- Automatische timestamp bij delen
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL, -- Bij verwijderen gebruiker, stel user_id in op NULL
+  FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id) ON DELETE NO ACTION -- Voorkom cyclische paden, handmatige verwijdering vereist
+);
+
+-- Create the Comments Table
+CREATE TABLE comments (
+  comment_id INT PRIMARY KEY IDENTITY(1,1), -- Unieke comment ID, auto-increment
+  user_id INT,                              -- Verwijst naar de gebruiker (Foreign Key)
+  recipe_id INT,                            -- Verwijst naar het recept (Foreign Key)
+  comment_text TEXT NOT NULL,               -- De commentaar van de gebruiker
+  created_at DATETIME DEFAULT GETDATE(),    -- Automatische timestamp bij comment
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL, -- Bij verwijderen gebruiker, stel user_id in op NULL
+  FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id) ON DELETE NO ACTION -- Voorkom cyclische paden, handmatige verwijdering vereist
+);

@@ -1,0 +1,44 @@
+
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  max-height: 80px; /* Zorgt dat het logo niet groter wordt dan de navbar */
+  object-fit: contain; /* Zorgt ervoor dat het logo niet vervormt */
+
+} 
+
+.nav-links {
+  display: flex;
+  align-items: center;
+ 
+}
+
+.nav-links a {
+  color: #0D2A37;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.nav-links a:hover {
+  
+  color: #F85C00;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #E3E4DF;
+  color: #0D2A37;
+  width: 100%;
+  height: 80px; /* Set a fixed height */
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-sizing: border-box;
+}

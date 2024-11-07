@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mysql" // or "mysql" if you are using MySQL
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  user_id       Int      @id @default(autoincrement())
+  username      String   @unique
+  email         String   @unique
+  password      String
+  profile_image String?  // Optional field
+  bio           String?  // Optional field
+  created_at    DateTime @default(now())
+  
+  // Relations
+  recipes   Recipe[]
+  likes     Like[]
+  shares    Share[]
+  comments  Comment[]
+}
+
+model Recipe {
+  recipe_id   Int      @id @default(autoincrement())
+  user_id     Int
+  title       String
+  description String
+  ingredients String
+  instructions String
+  image_url   String?
+  created_at  DateTime @default(now())
+
+  // Relations
+  user     User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  likes    Like[]
+  shares   Share[]
+  comments Comment[]
+}
+
+model Like {
+  like_id   Int     @id @default(autoincrement())
+  user_id   Int?
+  recipe_id Int
+
+  // Relations
+  user   User?   @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
+  recipe Recipe  @relation(fields: [recipe_id], references: [recipe_id], onDelete: NoAction)
+}
+
+model Share {
+  share_id  Int      @id @default(autoincrement())
+  user_id   Int?
+  recipe_id Int
+  shared_at DateTime @default(now())
+
+  // Relations
+  user   User?   @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
+  recipe Recipe  @relation(fields: [recipe_id], references: [recipe_id], onDelete: NoAction)
+}
+
+model Comment {
+  comment_id  Int      @id @default(autoincrement())
+  user_id     Int?
+  recipe_id   Int
+  comment_text String
+  created_at  DateTime @default(now())
+
+  // Relations
+  user   User?   @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
+  recipe Recipe  @relation(fields: [recipe_id], references: [recipe_id], onDelete: NoAction)
+}
